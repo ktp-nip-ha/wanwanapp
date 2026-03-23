@@ -9,13 +9,11 @@
     height: 100vh;
     overflow: hidden;
     background: #f0f8ff;
+      background-image: url("bg.png");
+    background-size: cover;
+    background-position: center;
   }
 
-  body {
-  background-image: url("bg.png");
-  background-size: cover;
-  background-position: center;
-}
 
   #dog {
     position: absolute;
@@ -56,11 +54,12 @@
 <img id="dog" src="normal.png">
 
 <!-- 音 -->
-<audio id="sound" src="wan.mp3"></audio>
+<audio id="sound"></audio>
 
 <script>
 const dog = document.getElementById("dog");
 const sound = document.getElementById("sound");
+const sounds = ["wan1.mp3", "wan2.mp3", "wan3.mp3"];
 
 let startX = 0;
 let startY = 0;
@@ -110,8 +109,11 @@ dog.addEventListener("touchend", (e) => {
     dog.classList.add("poyo");
 
     // 🔊 音
-    sound.currentTime = 0;
-    sound.play();
+  const random = Math.floor(Math.random() * sounds.length);
+  sound.src = sounds[random];
+  sound.pause();
+  sound.currentTime = 0;
+  sound.play();
 
     // ✨ キラキラ
     createSparkle(startX, startY);
@@ -140,6 +142,9 @@ function createSparkle(x, y) {
     }, 800);
   }
 }
+
+console.log(sound.src);
+
 </script>
 
 </body>
