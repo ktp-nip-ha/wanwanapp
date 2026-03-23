@@ -13,28 +13,33 @@
       cursor: pointer;
       user-select: none;
       transition: transform 0.2s;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
     }
     .poyo {
       animation: poyo 0.5s ease-in-out infinite alternate;
     }
     @keyframes poyo {
-      0% { transform: scale(1, 1); }
-      100% { transform: scale(1.1, 0.9); }
+      0% { transform: translate(-50%, -50%) scale(1, 1); }
+      100% { transform: translate(-50%, -50%) scale(1.1, 0.9); }
     }
   </style>
 </head>
 <body>
 
   <h2>わんこをなでてね！</h2>
-  <img id="dog" src="nomal.png">
+  <img id="dog" src="nomal.png" draggable="false">
 
   <script>
     const dog = document.getElementById("dog");
+    let isDragging = false;
+    let isSwiping = false;
+    let startX, startY;
 
-    dog.addEventListener("click", function(e) {
-      const y = e.offsetY;
+    const handleAction = (y) => {
       const height = dog.clientHeight;
-
       if (y < height / 3) {
         dog.src = "head.png";
       } else if (y < height * 2 / 3) {
@@ -43,11 +48,30 @@
         dog.src = "foot.png";
       }
       dog.classList.add("poyo");
-
       setTimeout(() => {
         dog.src = "nomal.png";
         dog.classList.remove("poyo");
       }, 2000);
+    };
+
+    dog.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      isSwiping = false;
+      startX = e.clientX - dog.offsetLeft;
+      startY = e.clientY - dog.offsetTop;
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      isSwiping = true;
+      dog.style.left = `${e.clientX - startX + dog.clientWidth / 2}px`;
+      dog.style.top = `${e.clientY - startY + dog.clientHeight / 2}px`;
+      handleAction(e.offsetY);
+    });
+
+    window.addEventListener("mouseup", (e) => {
+      if (isDragging && !isSwiping) handleAction(e.offsetY);
+      isDragging = false;
     });
   </script>
 
