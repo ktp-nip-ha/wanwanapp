@@ -68,12 +68,14 @@ dog.addEventListener("touchend", () => {
   // ドラッグじゃなかった＝なでなで
   if (!isDragging) {
 
-    const height = window.innerHeight;
-
     // 👇 ここで位置によって分岐
-    if (startY < height / 3) {
+    const rect = dog.getBoundingClientRect();
+    const dogY = startY - rect.top;
+    const dogH = rect.height;
+
+    if (dogY < dogH / 3) {
       dog.src = "head.png";
-    } else if (startY < height * 2 / 3) {
+    } else if (dogY < dogH * 2 / 3) {
       dog.src = "body.png";
     } else {
       dog.src = "foot.png";
