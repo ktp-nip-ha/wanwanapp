@@ -1,79 +1,79 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>なでなで犬</title>
-  <style>
-    body {
-      text-align: center;
-      background: #f0f8ff;
-    }
-    img {
-      width: 300px;
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.2s;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-    }
-    .poyo {
-      animation: poyo 0.5s ease-in-out infinite alternate;
-    }
-    @keyframes poyo {
-      0% { transform: translate(-50%, -50%) scale(1, 1); }
-      100% { transform: translate(-50%, -50%) scale(1.1, 0.9); }
-    }
-  </style>
+<meta charset="UTF-8">
+<title>なでなで犬</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: #f0f8ff;
+  }
+
+  #dog {
+    position: absolute;
+    width: 200px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    touch-action: none; /* 超重要 */
+  }
+</style>
 </head>
 <body>
 
-  <h2>わんこをなでてね！</h2>
-  <img id="dog" src="nomal.png" draggable="false">
+<img id="dog" src="normal.png">
 
-  <script>
-    const dog = document.getElementById("dog");
-    let isDragging = false;
-    let isSwiping = false;
-    let startX, startY;
+<script>
+const dog = document.getElementById("dog");
 
-    const handleAction = (y) => {
-      const height = dog.clientHeight;
-      if (y < height / 3) {
-        dog.src = "head.png";
-      } else if (y < height * 2 / 3) {
-        dog.src = "body.png";
-      } else {
-        dog.src = "foot.png";
-      }
-      dog.classList.add("poyo");
-      setTimeout(() => {
-        dog.src = "nomal.png";
-        dog.classList.remove("poyo");
-      }, 2000);
-    };
+let startX = 0;
+let startY = 0;
+let isDragging = false;
 
-    dog.addEventListener("mousedown", (e) => {
-      isDragging = true;
-      isSwiping = false;
-      startX = e.clientX - dog.offsetLeft;
-      startY = e.clientY - dog.offsetTop;
-    });
+dog.addEventListener("touchstart", (e) => {
+  const touch = e.touches[0];
+  startX = touch.clientX;
+  startY = touch.clientY;
+  isDragging = false;
+});
 
-    window.addEventListener("mousemove", (e) => {
-      if (!isDragging) return;
-      isSwiping = true;
-      dog.style.left = `${e.clientX - startX + dog.clientWidth / 2}px`;
-      dog.style.top = `${e.clientY - startY + dog.clientHeight / 2}px`;
-      handleAction(e.offsetY);
-    });
+dog.addEventListener("touchmove", (e) => {
+  const touch = e.touches[0];
+  const dx = touch.clientX - startX;
+  const dy = touch.clientY - startY;
 
-    window.addEventListener("mouseup", (e) => {
-      if (isDragging && !isSwiping) handleAction(e.offsetY);
-      isDragging = false;
-    });
-  </script>
+  // 一定以上動いたらドラッグ扱い
+  if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+    isDragging = true;
+
+    dog.style.left = touch.clientX + "px";
+    dog.style.top = touch.clientY + "px";
+    dog.style.transform = "translate(-50%, -50%)";
+  }
+});
+
+dog.addEventListener("touchend", (e) => {
+  if (!isDragging) {
+    // スワイプじゃなく「なでなで」
+    const y = startY;
+    const height = window.innerHeight;
+
+    if (y < height / 3) {
+      dog.src = "head.png";
+    } else if (y < height * 2 / 3) {
+      dog.src = "body.png";
+    } else {
+      dog.src = "foot.png";
+    }
+
+    setTimeout(() => {
+      dog.src = "normal.png";
+    }, 1000);
+  }
+});
+</script>
 
 </body>
 </html>
