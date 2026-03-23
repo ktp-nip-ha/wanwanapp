@@ -1,150 +1,46 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>動く犬を撫でるアニメーション</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: 'Arial', sans-serif;
-        }
-
-        .container {
-            text-align: center;
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
-        }
-
-        .dog-container {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            margin: 0 auto 30px;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-        .dog-container:hover {
-            transform: scale(1.05);
-        }
-
-        .dog-image {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            transition: opacity 0.2s;
-        }
-
-        .instructions {
-            color: #666;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-
-        .instructions p {
-            margin-bottom: 10px;
-        }
-
-        .status {
-            margin-top: 20px;
-            font-weight: bold;
-            color: #667eea;
-            min-height: 25px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>なでなで犬</title>
+  <style>
+    body {
+      text-align: center;
+      background: #f0f8ff;
+    }
+    img {
+      width: 300px;
+      cursor: pointer;
+      user-select: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🐕 犬を撫でるアニメーション</h1>
-        
-        <div class="dog-container" id="dogContainer">
-            <img id="dogImage" class="dog-image" src="images/dog-1.svg" alt="犬">
-        </div>
 
-        <div class="instructions">
-            <p>犬をクリックまたはホバーして撫でてあげよう！</p>
-            <p id="dogNameDisplay">犬が待っています...</p>
-        </div>
+  <h2>わんこをなでてね！</h2>
+  <img id="dog" src="normal.png">
 
-        <div class="status" id="statusText"></div>
-    </div>
+  <script>
+    const dog = document.getElementById("dog");
 
-    <script>
-        const dogContainer = document.getElementById('dogContainer');
-        const dogImage = document.getElementById('dogImage');
-        const statusText = document.getElementById('statusText');
-        const dogNameDisplay = document.getElementById('dogNameDisplay');
+    dog.addEventListener("click", function(e) {
+      const y = e.offsetY;
+      const height = dog.clientHeight;
 
-        const images = [
-            'images/dog-1.svg',
-            'images/dog-2.svg',
-            'images/dog-3.svg',
-            'images/dog-4.svg'
-        ];
+      if (y < height / 3) {
+        dog.src = "head.png";   // 頭なで
+      } else if (y < height * 2 / 3) {
+        dog.src = "body.png";   // 体なで
+      } else {
+        dog.src = "foot.png";   // 足なで
+      }
 
-        const messages = [
-            '犬が立っています',
-            '犬が頭を下げました',
-            '犬が舐めています',
-            '犬が満足そうです'
-        ];
+      // 1秒後に元に戻る
+      setTimeout(() => {
+        dog.src = "normal.png";
+      }, 1000);
+    });
+  </script>
 
-        let currentFrame = 0;
-        let isAnimating = false;
-
-        async function playAnimation() {
-            if (isAnimating) return;
-            isAnimating = true;
-
-            for (let i = 0; i < 12; i++) {
-                currentFrame = i % images.length;
-                dogImage.src = images[currentFrame];
-                statusText.textContent = messages[currentFrame];
-                await new Promise(resolve => setTimeout(resolve, 200));
-            }
-
-            isAnimating = false;
-            statusText.textContent = '撫でてくれてありがとう！';
-            dogNameDisplay.textContent = '犬は喜んでいます🐕💕';
-        }
-
-        dogContainer.addEventListener('click', playAnimation);
-        dogContainer.addEventListener('mouseenter', () => {
-            if (!isAnimating) {
-                dogNameDisplay.textContent = '犬があなたを見つめています🐕';
-            }
-        });
-
-        dogContainer.addEventListener('mouseleave', () => {
-            if (!isAnimating) {
-                dogNameDisplay.textContent = '犬が待っています...';
-                statusText.textContent = '';
-            }
-        });
-
-        // 初期状態
-        dogImage.src = images[0];
-        dogNameDisplay.textContent = '犬が待っています...';
-    </script>
 </body>
 </html>
