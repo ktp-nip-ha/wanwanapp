@@ -10,6 +10,7 @@
     overflow: hidden;
     background: #f0f8ff;
   }
+
   body {
   background-image: url("bg.png");
   background-size: cover;
@@ -25,7 +26,7 @@
     touch-action: none;
   }
 
-  /* ぽよぽよアニメ */
+  /* ぽよ */
   .poyo {
     animation: poyo 0.4s ease;
   }
@@ -35,14 +36,31 @@
     50%  { transform: translate(-50%, -50%) scale(1.2); }
     100% { transform: translate(-50%, -50%) scale(1); }
   }
+
+  /* キラキラ */
+  .sparkle {
+    position: absolute;
+    pointer-events: none;
+    font-size: 24px;
+    animation: sparkle 0.8s forwards;
+  }
+
+  @keyframes sparkle {
+    0% { opacity: 1; transform: scale(0.5); }
+    100% { opacity: 0; transform: scale(1.5) translateY(-20px); }
+  }
 </style>
 </head>
 <body>
 
 <img id="dog" src="normal.png">
 
+<!-- 音 -->
+<audio id="sound" src="wan.mp3"></audio>
+
 <script>
 const dog = document.getElementById("dog");
+const sound = document.getElementById("sound");
 
 let startX = 0;
 let startY = 0;
@@ -62,16 +80,16 @@ dog.addEventListener("touchmove", (e) => {
 
   if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
     isDragging = true;
-
     dog.style.left = touch.clientX + "px";
     dog.style.top = touch.clientY + "px";
   }
 });
 
-dog.addEventListener("touchend", () => {
+dog.addEventListener("touchend", (e) => {
 
-  // ドラッグじゃなかった＝なでなで
   if (!isDragging) {
+
+    const height = window.innerHeight;
 
     // 👇 ここで位置によって分岐
     const rect = dog.getBoundingClientRect();
@@ -86,17 +104,42 @@ dog.addEventListener("touchend", () => {
       dog.src = "foot.png";
     }
 
-    // 👇 ぽよぽよ追加
+    // ぽよ
     dog.classList.remove("poyo");
-    void dog.offsetWidth; // 再発火用
+    void dog.offsetWidth;
     dog.classList.add("poyo");
 
-    // 👇 2秒後に戻す
+    // 🔊 音
+    sound.currentTime = 0;
+    sound.play();
+
+    // ✨ キラキラ
+    createSparkle(startX, startY);
+
+    // 戻す
     setTimeout(() => {
       dog.src = "normal.png";
     }, 2000);
   }
 });
+
+// キラキラ生成
+function createSparkle(x, y) {
+  for (let i = 0; i < 5; i++) {
+    const span = document.createElement("span");
+    span.className = "sparkle";
+    span.innerText = "✨";
+
+    span.style.left = (x + Math.random() * 40 - 20) + "px";
+    span.style.top = (y + Math.random() * 40 - 20) + "px";
+
+    document.body.appendChild(span);
+
+    setTimeout(() => {
+      span.remove();
+    }, 800);
+  }
+}
 </script>
 
 </body>
