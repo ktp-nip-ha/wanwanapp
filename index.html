@@ -12,6 +12,14 @@
       width: 300px;
       cursor: pointer;
       user-select: none;
+      transition: transform 0.2s;
+    }
+    .poyo {
+      animation: poyo 0.5s ease-in-out infinite alternate;
+    }
+    @keyframes poyo {
+      0% { transform: scale(1, 1); }
+      100% { transform: scale(1.1, 0.9); }
     }
   </style>
 </head>
@@ -28,17 +36,18 @@
       const height = dog.clientHeight;
 
       if (y < height / 3) {
-        dog.src = "head.png";   // 頭なで
+        dog.src = "head.png";
       } else if (y < height * 2 / 3) {
-        dog.src = "body.png";   // 体なで
+        dog.src = "body.png";
       } else {
-        dog.src = "foot.png";   // 足なで
+        dog.src = "foot.png";
       }
+      dog.classList.add("poyo");
 
-      // 1秒後に元に戻る
       setTimeout(() => {
         dog.src = "nomal.png";
-      }, 1000);
+        dog.classList.remove("poyo");
+      }, 2000);
     });
   </script>
 
